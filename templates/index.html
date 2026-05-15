@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barber App</title>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#111111">
+<style>
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 10px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.card {
+    background: white;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.time {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.name {
+    margin-top: 4px;
+}
+
+.service {
+    color: #555;
+    font-size: 14px;
+}
+
+.phone {
+    color: #007bff;
+    font-size: 13px;
+}
+
+.btn {
+    display: block;
+    text-align: center;
+    padding: 15px;
+    background: #111;
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    margin-top: 15px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>📅 Ραντεβού</h2>
+
+{% for a in appointments %}
+
+<div class="card">
+
+    <div class="time">
+        ⏰ {{ a[3] }} - {{ (a[3].split(":")[0]|int * 60 + a[3].split(":")[1]|int + a[4]) // 60 }}:
+        {{ "%02d"|format((a[3].split(":")[0]|int * 60 + a[3].split(":")[1]|int + a[4]) % 60) }}
+    </div>
+
+    <div class="name">👤 {{ a[1] }}</div>
+    <div class="service">✂️ {{ a[5] }}</div>
+    <div class="phone">📞 {{ a[2] }}</div>
+
+</div>
+
+{% endfor %}
+
+<a class="btn" href="/add">➕ Νέο Ραντεβού</a>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/static/sw.js")
+    .then(() => console.log("SW registered"))
+    .catch(err => console.log("SW failed", err));
+}
+</script>
+</body>
+</html>

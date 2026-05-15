@@ -1,0 +1,15 @@
+{
+  "name": "Barber Scheduler",
+  "short_name": "Barber",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3050/3050153.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

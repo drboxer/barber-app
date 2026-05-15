@@ -1,91 +1,183 @@
 <!DOCTYPE html>
-<html>
+<html lang="el">
+
 <head>
+
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Barber App</title>
-<link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#111111">
+
+<title>Barber Dashboard</title>
+
 <style>
-body {
-    font-family: Arial;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 10px;
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f4f4f4;
+    color:#111;
 }
 
-h2 {
-    text-align: center;
+.header{
+    background:#111;
+    color:white;
+    padding:25px;
+    border-bottom-left-radius:20px;
+    border-bottom-right-radius:20px;
 }
 
-.card {
-    background: white;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.header h1{
+    margin:0;
+    font-size:28px;
 }
 
-.time {
-    font-weight: bold;
-    font-size: 16px;
+.header p{
+    opacity:0.8;
 }
 
-.name {
-    margin-top: 4px;
+.container{
+    padding:20px;
 }
 
-.service {
-    color: #555;
-    font-size: 14px;
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
 }
 
-.phone {
-    color: #007bff;
-    font-size: 13px;
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
 }
 
-.btn {
-    display: block;
-    text-align: center;
-    padding: 15px;
-    background: #111;
-    color: white;
-    border-radius: 12px;
-    text-decoration: none;
-    margin-top: 15px;
+.stat-box{
+    background:#fafafa;
+    border-radius:14px;
+    padding:20px;
+    text-align:center;
 }
+
+.stat-box h2{
+    margin:0;
+    font-size:30px;
+}
+
+.stat-box p{
+    margin-top:8px;
+    color:#666;
+}
+
+.btn{
+    display:block;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    font-size:17px;
+    font-weight:bold;
+    text-decoration:none;
+    text-align:center;
+    margin-top:15px;
+}
+
+.primary{
+    background:#111;
+    color:white;
+}
+
+.secondary{
+    background:white;
+    border:2px solid #111;
+    color:#111;
+}
+
+.next{
+    font-size:18px;
+    margin-top:10px;
+}
+
+.small{
+    color:#777;
+    font-size:14px;
+}
+
 </style>
 
 </head>
 
 <body>
 
-<h2>📅 Ραντεβού</h2>
+<div class="header">
 
-{% for a in appointments %}
+<h1>💈 Barber Scheduler</h1>
 
-<div class="card">
-
-    <div class="time">
-        ⏰ {{ a[3] }} - {{ (a[3].split(":")[0]|int * 60 + a[3].split(":")[1]|int + a[4]) // 60 }}:
-        {{ "%02d"|format((a[3].split(":")[0]|int * 60 + a[3].split(":")[1]|int + a[4]) % 60) }}
-    </div>
-
-    <div class="name">👤 {{ a[1] }}</div>
-    <div class="service">✂️ {{ a[5] }}</div>
-    <div class="phone">📞 {{ a[2] }}</div>
+<p>Dashboard</p>
 
 </div>
 
-{% endfor %}
+<div class="container">
 
-<a class="btn" href="/add">➕ Νέο Ραντεβού</a>
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/static/sw.js")
-    .then(() => console.log("SW registered"))
-    .catch(err => console.log("SW failed", err));
-}
-</script>
+<div class="card">
+
+<h3>📅 Σήμερα</h3>
+
+<div class="stats">
+
+<div class="stat-box">
+<h2>{{ appointments|length }}</h2>
+<p>Ραντεβού</p>
+</div>
+
+<div class="stat-box">
+<h2>€{{ appointments|length * 15 }}</h2>
+<p>Εκτίμηση</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>👤 Επόμενο Ραντεβού</h3>
+
+{% if appointments %}
+
+<div class="next">
+
+<strong>{{ appointments[0][1] }}</strong><br>
+
+<span class="small">
+⏰ {{ appointments[0][3] }}
+</span>
+
+</div>
+
+{% else %}
+
+<p>Δεν υπάρχουν ραντεβού.</p>
+
+{% endif %}
+
+</div>
+
+<div class="card">
+
+<h3>⚡ Γρήγορες Ενέργειες</h3>
+
+<a class="btn primary" href="/calendar">
+📅 Άνοιγμα Calendar
+</a>
+
+<a class="btn secondary" href="/add">
+➕ Νέο Ραντεβού
+</a>
+
+</div>
+
+</div>
+
 </body>
 </html>

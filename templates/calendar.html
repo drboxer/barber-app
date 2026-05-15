@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<style>
+body{
+    font-family:Arial;
+    margin:0;
+    padding:15px;
+    background:#0f0f0f;
+    color:white;
+}
+
+#calendar{
+    background:#1a1a1a;
+    padding:10px;
+    border-radius:18px;
+    box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+.fc{
+    color:white;
+}
+
+.fc-toolbar-title{
+    color:white;
+}
+
+.fc-button{
+    background:#2a2a2a !important;
+    border:none !important;
+    border-radius:10px !important;
+}
+
+.fc-button:hover{
+    background:#3a3a3a !important;
+}
+
+.fc-timegrid-slot{
+    border-color:#2c2c2c !important;
+}
+
+.fc-col-header-cell{
+    background:#161616;
+}
+
+
+.fc-event{
+    border:none !important;
+    border-radius:12px !important;
+    padding:4px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th{
+    border-color:#2c2c2c;
+}
+
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.dashboard-btn{
+    background:#1f1f1f;
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:bold;
+    border:1px solid #333;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+<a href="/" class="dashboard-btn">
+🏠 Dashboard
+</a>
+
+<h2>📅 Barber Calendar</h2>
+
+</div><h2>📅 Barber Calendar</h2>
+
+<div id="calendar"></div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+
+    locale: 'el',
+
+    initialView: 'timeGridDay',
+
+    slotMinTime: "07:00:00",
+    slotMaxTime: "22:00:00",
+
+    slotDuration: "00:30:00",
+
+    expandRows: true,
+
+    nowIndicator: true,
+
+    allDaySlot: false,
+
+    eventDisplay: 'block',
+
+    headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'timeGridDay,timeGridWeek'
+    },
+    eventClick: function(info) {
+
+    const appointmentId = info.event.id;
+
+    window.location.href = "/edit/" + appointmentId;
+},
+    editable: true,
+    height: "auto",
+    eventDrop: function(info) {
+
+    const eventId = info.event.id;
+
+    const newStart = info.event.start
+        .toTimeString()
+        .substring(0,5);
+
+    fetch("/move_appointment", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            id: eventId,
+            start_time: newStart
+        })
+
+    });
+
+},
+eventDurationEditable: true,
+eventResize: function(info) {
+
+    const eventId = info.event.id;
+
+    const start = info.event.start;
+    const end = info.event.end;
+
+    const durationMinutes = (end - start) / 60000;
+
+    fetch("/resize_appointment", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            id: eventId,
+            duration: durationMinutes
+        })
+
+    });
+
+},
+
+    dateClick: function(info) {
+
+        const selectedTime = info.dateStr.substring(11,16);
+
+        window.location.href = "/add?time=" + selectedTime;
+    },
+
+    events: {{ events|tojson }}
+
+});
+    calendar.render();
+});
+
+</script>
+
+</body>
+</html>

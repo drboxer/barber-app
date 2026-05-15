@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+    padding:20px;
+}
+
+form{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    color:white;
+    font-size:16px;
+}
+
+.save{
+    background:#111;
+}
+
+.delete{
+    background:#ff4d4d;
+    text-align:center;
+    display:block;
+    padding:15px;
+    border-radius:10px;
+    text-decoration:none;
+    color:white;
+    margin-top:15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>✏️ Επεξεργασία Ραντεβού</h2>
+
+<form method="POST">
+
+<input name="name" value="{{ appointment[1] }}" required>
+
+<input name="phone" value="{{ appointment[2] }}" required>
+
+<input type="time" name="start_time" value="{{ appointment[3] }}" required>
+
+<select name="duration">
+
+<option value="20" {% if appointment[4] == 20 %}selected{% endif %}>20 λεπτά</option>
+
+<option value="30" {% if appointment[4] == 30 %}selected{% endif %}>30 λεπτά</option>
+
+<option value="45" {% if appointment[4] == 45 %}selected{% endif %}>45 λεπτά</option>
+
+</select>
+
+<select name="service">
+
+<option {% if appointment[5] == "Κούρεμα" %}selected{% endif %}>Κούρεμα</option>
+
+<option {% if appointment[5] == "Fade" %}selected{% endif %}>Fade</option>
+
+<option {% if appointment[5] == "Ξύρισμα" %}selected{% endif %}>Ξύρισμα</option>
+
+<option {% if appointment[5] == "Παιδικό" %}selected{% endif %}>Παιδικό</option>
+
+</select>
+
+<button class="save" type="submit">💾 Αποθήκευση</button>
+
+</form>
+
+<a class="delete" href="/delete/{{ appointment[0] }}">
+🗑 Διαγραφή Ραντεβού
+</a>
+
+</body>
+</html>

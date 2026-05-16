@@ -131,10 +131,12 @@ def add():
 
     conn.close()
     selected_time = request.args.get("time", "")
+    selected_date = request.args.get("date", "")
 
     return render_template(
         "add.html",
-        selected_time=selected_time
+        selected_time=selected_time,
+        selected_date=selected_date
     )
 
 
@@ -215,6 +217,7 @@ def edit(id):
 
         name = request.form["name"]
         phone = request.form["phone"]
+        date = request.form["date"]
         start_time = request.form["start_time"]
         duration = int(request.form["duration"])
         service = request.form["service"]
@@ -231,7 +234,7 @@ def edit(id):
         return redirect("/calendar")
 
     c.execute("""
-        SELECT id, name, phone, start_time, duration, service
+        SELECT id, name, phone, date, start_time, duration, service
         FROM appointments
         WHERE id=?
     """, (id,))

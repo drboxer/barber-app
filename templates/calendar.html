@@ -110,6 +110,8 @@ document.addEventListener('DOMContentLoaded', function() {
     locale: 'el',
 
     initialView: 'timeGridDay',
+    selectable: true,
+
     timeZone: 'local',
 
     slotMinTime: "07:00:00",
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const appointmentId = info.event.id;
 
     window.location.href = "/edit/" + appointmentId;
-},
+    },
     editable: true,
     height: "auto",
     eventDrop: function(info) {
@@ -161,9 +163,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
-},
-eventDurationEditable: true,
-eventResize: function(info) {
+    },
+    eventDurationEditable: true,
+    eventResize: function(info) {
 
     const eventId = info.event.id;
 
@@ -192,8 +194,10 @@ eventResize: function(info) {
     dateClick: function(info) {
 
         const selectedTime = info.dateStr.substring(11,16);
+        const selectedDate = info.dateStr.substring(0,10);
 
-        window.location.href = "/add?time=" + selectedTime;
+        window.location.href = "/add?date=" + selectedDate +
+        "&time=" + selectedTime;
     },
 
     events: {{ events|tojson }}

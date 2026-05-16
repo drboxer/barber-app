@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Customers</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#0f0f0f;
+    color:white;
+    font-family:Arial;
+    padding:20px;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.dashboard-btn{
+    text-decoration:none;
+    color:black;
+    background:linear-gradient(135deg,#d4af37,#f5d76e);
+    padding:12px 18px;
+    border-radius:12px;
+    font-weight:bold;
+}
+
+.customer-card{
+    background:#1b1b1b;
+    padding:20px;
+    border-radius:18px;
+    margin-bottom:16px;
+    box-shadow:0 2px 15px rgba(0,0,0,0.3);
+}
+
+.customer-card h3{
+    margin-top:0;
+}
+
+.phone{
+    color:#bbb;
+}
+
+.open-btn{
+    display:inline-block;
+    margin-top:14px;
+    text-decoration:none;
+    background:#2a2a2a;
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+}
+
+.search{
+
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+
+    background:#1f1f1f;
+    color:white;
+
+    margin-bottom:20px;
+    box-sizing:border-box;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+<a href="/" class="dashboard-btn">
+🏠 Dashboard
+</a>
+
+<h2>👤 Πελατολόγιο</h2>
+
+</div>
+<input
+type="text"
+id="searchInput"
+placeholder="🔍 Αναζήτηση πελάτη..."
+class="search"
+/>
+{% for c in customers %}
+
+<div class="customer-card">
+
+<h3>{{ c[1] }}</h3>
+
+<p class="phone">📞 {{ c[2] }}</p>
+
+<a href="/customer/{{ c[0] }}" class="open-btn">
+Άνοιγμα Πελάτη
+</a>
+
+</div>
+
+{% endfor %}
+<script>
+
+const searchInput =
+    document.getElementById("searchInput");
+
+searchInput.addEventListener("keyup", function(){
+
+    const value =
+        this.value.toLowerCase();
+
+    const cards =
+        document.querySelectorAll(".customer-card");
+
+    cards.forEach(card => {
+
+        const text =
+            card.innerText.toLowerCase();
+
+        if(text.includes(value)){
+
+            card.style.display = "block";
+
+        } else {
+
+            card.style.display = "none";
+        }
+
+    });
+
+});
+
+</script>
+</body>
+</html>

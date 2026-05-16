@@ -104,10 +104,10 @@ button{
 <form method="POST">
 
 <label>Πελάτης</label>
-<input type="text" name="name" required>
+<input type="text" name="name" id="name" required>
 
 <label>Τηλέφωνο</label>
-<input type="text" name="phone" required>
+<input type="text" name="phone" id="phone" required>
 <label>Ημερομηνία</label>
 <input type="date" name="date" value="{{ selected_date }}" required>
 <label>Ώρα</label>
@@ -141,6 +141,38 @@ value="{{ selected_time }}" required>
 </button>
 
 </form>
+<script>
 
+const phoneInput =
+    document.getElementById("phone");
+
+const nameInput =
+    document.getElementById("name");
+
+phoneInput.addEventListener("input", async function(){
+
+    const phone = this.value;
+
+    if(phone.length < 3) return;
+
+    try {
+
+        const res =
+            await fetch("/search_customer?phone=" + phone);
+
+        const data =
+            await res.json();
+
+        if(data.name){
+            nameInput.value = data.name;
+        }
+
+    } catch(err){
+        console.log("Search error", err);
+    }
+
+});
+
+</script>
 </body>
 </html>

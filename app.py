@@ -3,7 +3,7 @@ import sqlite3
 from flask import jsonify
 from datetime import date
 import os
-import sqlite3
+
 
 
 app = Flask(__name__)
@@ -72,15 +72,30 @@ def index():
     """, (today,))
 
     appointments = c.fetchall()
+    c.execute("SELECT COUNT(*) FROM customers")
 
-    conn.close()
+    customer_count = c.fetchone()[0]
+
+
 
     estimated = len(appointments) * 15
+    # next appointment
+    c.execute("""
+            SELECT name, date, start_time, service
+            FROM appointments
+            ORDER BY date ASC, start_time ASC
+            LIMIT 1
+        """)
+
+    next_appointment = c.fetchone()
+    conn.close()
 
     return render_template(
         "index.html",
         appointments=appointments,
-        estimated=estimated
+        estimated=estimated,
+        next_appointment=next_appointment,
+        customer_count=customer_count
     )
 
 # ---------------- ADD ----------------
@@ -133,11 +148,37 @@ def add():
                     start_time=start_time,
                     date=date
                 )
+
+        # check if customer exists
+
+        c.execute(
+            "SELECT id FROM customers WHERE phone=?",
+            (phone,)
+        )
+
+        customer = c.fetchone()
+
+        if not customer:
+            c.execute(
+                """
+                INSERT INTO customers
+                (name, phone, notes, created_at)
+                VALUES (?, ?, ?, datetime('now'))
+                """,
+                (
+                    name,
+                    phone,
+                    ""
+                )
+            )
+
+            conn.commit()
+
         c.execute("""
-                    INSERT INTO appointments
-                    (name, phone, date, start_time, duration, service)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (
+            INSERT INTO appointments
+            (name, phone, date, start_time, duration, service)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
             name,
             phone,
             date,
@@ -324,6 +365,130 @@ def resize_appointment():
 
     return jsonify({"success": True})
 
+
+@app.route("/customers")
+def customers():
+
+    conn = sqlite3.connect("barber.db")
+
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT *
+        FROM customers
+        ORDER BY name
+    """)
+
+    customers = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "customers.html",
+        customers=customers
+    )
+
+@app.route("/customer/<int:id>")
+def customer(id):
+
+    conn = sqlite3.connect("barber.db")
+
+    c = conn.cursor()
+
+    c.execute(
+        "SELECT * FROM customers WHERE id=?",
+        (id,)
+    )
+
+    customer = c.fetchone()
+
+    c.execute(
+        """
+        SELECT *
+        FROM appointments
+        WHERE phone=?
+        ORDER BY date DESC, start_time DESC
+        """,
+        (customer[2],)
+    )
+
+    appointments = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "customer.html",
+        customer=customer,
+        appointments=appointments
+    )
+
+@app.route("/update_customer/<int:id>", methods=["POST"])
+def update_customer(id):
+
+    notes = request.form["notes"]
+
+    conn = sqlite3.connect("barber.db")
+
+    c = conn.cursor()
+
+    c.execute(
+        "UPDATE customers SET notes=? WHERE id=?",
+        (notes, id)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(f"/customer/{id}")
+
+@app.route("/delete_customer/<int:id>")
+def delete_customer(id):
+
+    conn = sqlite3.connect("barber.db")
+
+    c = conn.cursor()
+
+    c.execute(
+        "DELETE FROM customers WHERE id=?",
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/customers")
+
+@app.route("/search_customer")
+def search_customer():
+
+    phone = request.args.get("phone")
+
+    conn = sqlite3.connect("barber.db")
+
+    c = conn.cursor()
+
+    c.execute(
+        """
+        SELECT name, phone
+        FROM customers
+        WHERE phone LIKE ?
+        LIMIT 1
+        """,
+        (phone + "%",)
+    )
+
+    customer = c.fetchone()
+
+    conn.close()
+
+    if customer:
+
+        return {
+            "name": customer[0],
+            "phone": customer[1]
+        }
+
+    return jsonify({})
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":

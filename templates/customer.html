@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ customer[1] }}</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#0f0f0f;
+    color:white;
+    font-family:Arial;
+    padding:20px;
+}
+
+.card{
+    background:#1b1b1b;
+    border-radius:20px;
+    padding:24px;
+    margin-bottom:22px;
+}
+
+.history-item{
+    background:#222;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:14px;
+}
+
+.small{
+    color:#bbb;
+}
+
+.back-btn{
+    display:inline-block;
+    margin-bottom:20px;
+    text-decoration:none;
+    background:linear-gradient(135deg,#d4af37,#f5d76e);
+    color:black;
+    padding:12px 18px;
+    border-radius:12px;
+    font-weight:bold;
+}
+
+textarea{
+    width:100%;
+    min-height:120px;
+    border:none;
+    border-radius:14px;
+    padding:14px;
+    background:#2a2a2a;
+    color:white;
+    box-sizing:border-box;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="/customers" class="back-btn">
+⬅ Πελατολόγιο
+</a>
+
+<div class="card">
+
+<h1>{{ customer[1] }}</h1>
+
+<p class="small">📞 {{ customer[2] }}</p>
+
+<h3>📝 Notes</h3>
+
+<form method="POST" action="/update_customer/{{ customer[0] }}">
+
+<textarea name="notes">
+{{ customer[3] or '' }}
+</textarea>
+
+<button type="submit">
+💾 Αποθήκευση Notes
+</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>📅 History</h2>
+
+{% for a in appointments %}
+
+<div class="history-item">
+
+<strong>{{ a[3] }}</strong>
+
+—
+
+{{ a[6] }}
+
+at
+
+{{ a[4] }}
+
+</div>
+
+{% endfor %}
+
+</div>
+<a
+href="/delete_customer/{{ customer[0] }}"
+onclick="return confirm('Διαγραφή πελάτη;')"
+class="delete-btn"
+>
+🗑 Διαγραφή Πελάτη
+</a>
+</body>
+</html>

@@ -177,19 +177,25 @@ body{
 
 <div class="card">
 
-<h3>👤 Επόμενο Ραντεβού</h3>
+<h3>⏭ Επόμενος Πελάτης</h3>
 
-{% if appointments %}
+{% if next_appointment %}
 
-<div class="next">
+<p>
+👤 {{ next_appointment[0] }}
+</p>
 
-<strong>{{ appointments[0][1] }}</strong><br>
+<p>
+📅 {{ next_appointment[1] }}
+</p>
 
-<span class="small">
-⏰ {{ appointments[0][3] }}
-</span>
+<p>
+⏰ {{ next_appointment[2] }}
+</p>
 
-</div>
+<p>
+✂ {{ next_appointment[3] }}
+</p>
 
 {% else %}
 
@@ -197,6 +203,16 @@ body{
 
 {% endif %}
 
+</div>
+<div class="card">
+
+<h3>👤 Πελάτες</h3>
+
+<h1>{{ customer_count }}</h1>
+
+<p>Συνολικοί πελάτες</p>
+
+</div>
 </div>
 
 <div class="card">
@@ -210,6 +226,11 @@ body{
 <a class="btn secondary" href="/add">
 ➕ Νέο Ραντεβού
 </a>
+
+<a class="btn secondary" href="/customers">
+👤 Πελατολόγιο
+</a>
+
 
 </div>
 

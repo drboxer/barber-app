@@ -13,37 +13,61 @@
 body{
     margin:0;
     font-family:Arial;
-    background:#f4f4f4;
-    color:#111;
+    background:#0f0f0f;
+    color:white;
 }
 
 .header{
-    background:#111;
+    background:linear-gradient(135deg,#111,#1f1f1f);
     color:white;
-    padding:25px;
-    border-bottom-left-radius:20px;
-    border-bottom-right-radius:20px;
+    padding:30px 25px;
+    border-bottom-left-radius:25px;
+    border-bottom-right-radius:25px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
 }
+
 
 .header h1{
     margin:0;
-    font-size:28px;
+    font-size:30px;
 }
 
 .header p{
-    opacity:0.8;
+    margin-top:6px;
+    color:#d4af37;
+    font-size:15px;
 }
 
 .container{
     padding:20px;
 }
 
+.logo{
+    width:70px;
+    height:70px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#d4af37,#f5d76e);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:34px;
+    color:black;
+    font-weight:bold;
+}
+
+.logo-row{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
 .card{
-    background:white;
-    border-radius:16px;
+    background:#1b1b1b;
+    color:white;
+    border-radius:18px;
     padding:20px;
     margin-bottom:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    box-shadow:0 2px 15px rgba(0,0,0,0.3);
 }
 
 .stats{
@@ -53,10 +77,11 @@ body{
 }
 
 .stat-box{
-    background:#fafafa;
+    background:#2a2a2a;
     border-radius:14px;
     padding:20px;
     text-align:center;
+    color:white;
 }
 
 .stat-box h2{
@@ -66,7 +91,7 @@ body{
 
 .stat-box p{
     margin-top:8px;
-    color:#666;
+    color:#bbb;
 }
 
 .btn{
@@ -83,8 +108,8 @@ body{
 }
 
 .primary{
-    background:#111;
-    color:white;
+    background:linear-gradient(135deg,#d4af37,#f5d76e);
+    color:black;
 }
 
 .secondary{
@@ -99,7 +124,7 @@ body{
 }
 
 .small{
-    color:#777;
+    color:#bbb;
     font-size:14px;
 }
 
@@ -109,13 +134,24 @@ body{
 
 <body>
 
-<div class="header">
+<div class="logo-row">
 
-<h1>💈 Barber Scheduler</h1>
+<div class="logo">
+💈
+</div>
 
-<p>Dashboard</p>
+<div>
+
+<h1>Golden Cut</h1>
+
+<p>Premium Barber Scheduler</p>
 
 </div>
+
+</div>
+
+</div>
+
 
 <div class="container">
 

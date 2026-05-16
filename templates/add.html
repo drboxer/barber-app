@@ -1,63 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="el">
+
 <head>
+
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Νέο Ραντεβού</title>
 
 <style>
-body {
-    font-family: Arial;
-    background: #f4f4f4;
-    padding: 20px;
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f0f0f;
+    color:white;
+    padding:20px;
 }
 
-form {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
 }
 
-input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
+.back-btn{
+    background:#1f1f1f;
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+    text-decoration:none;
+    border:1px solid #333;
+    font-size:14px;
+    font-weight:bold;
 }
 
-button {
-    width: 100%;
-    padding: 15px;
-    background: #111;
-    color: white;
-    border: none;
-    border-radius: 10px;
+h2{
+    margin:0;
 }
+
+form{
+    background:#1a1a1a;
+    padding:22px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.35);
+}
+
+label{
+    display:block;
+    margin-top:18px;
+    margin-bottom:8px;
+    color:#d4af37;
+    font-weight:bold;
+}
+
+input,
+select{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#2a2a2a;
+    color:white;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border:2px solid #d4af37;
+}
+
+button{
+    width:100%;
+    margin-top:28px;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#d4af37,#f5d76e);
+    color:black;
+    font-size:17px;
+    font-weight:bold;
+}
+
 </style>
+
 </head>
 
 <body>
 
+<div class="topbar">
+
+<a href="/calendar" class="back-btn">
+← Calendar
+</a>
+
 <h2>➕ Νέο Ραντεβού</h2>
+
+</div>
 
 <form method="POST">
 
-<input name="name" placeholder="Όνομα" required>
-<input name="phone" placeholder="Τηλέφωνο" required>
+<label>Πελάτης</label>
+<input type="text" name="name" required>
 
-<input type="time" name="start_time" value="{{ selected_time }}" required>
+<label>Τηλέφωνο</label>
+<input type="text" name="phone" required>
+<label>Ημερομηνία</label>
+<input type="date" name="date" required>
+<label>Ώρα</label>
+<input type="time" name="start_time"
+value="{{ selected_time }}" required>
+
+<label>Διάρκεια</label>
 
 <select name="duration">
-    <option value="20">20 λεπτά</option>
-    <option value="30">30 λεπτά</option>
-    <option value="45">45 λεπτά</option>
+
+<option value="20">20 λεπτά</option>
+<option value="30">30 λεπτά</option>
+<option value="45">45 λεπτά</option>
+<option value="60">60 λεπτά</option>
+
 </select>
+
+<label>Υπηρεσία</label>
 
 <select name="service">
-    <option>Κούρεμα</option>
-    <option>Fade</option>
-    <option>Ξύρισμα</option>
+
+<option>Κούρεμα</option>
+<option>Fade</option>
+<option>Ξύρισμα</option>
+<option>Παιδικό</option>
+
 </select>
 
-<button type="submit">Αποθήκευση</button>
+<button type="submit">
+💾 Αποθήκευση Ραντεβού
+</button>
 
 </form>
 

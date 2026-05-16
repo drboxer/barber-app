@@ -1,51 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="el">
+
 <head>
 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Επεξεργασία Ραντεβού</title>
 
 <style>
 
 body{
-    font-family: Arial;
-    background:#f4f4f4;
+    margin:0;
+    font-family:Arial;
+    background:#0f0f0f;
+    color:white;
     padding:20px;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.back-btn{
+    background:#1f1f1f;
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+    text-decoration:none;
+    border:1px solid #333;
+    font-size:14px;
+    font-weight:bold;
+}
+
+h2{
+    margin:0;
 }
 
 form{
-    background:white;
-    padding:20px;
-    border-radius:12px;
+    background:#1a1a1a;
+    padding:22px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.35);
 }
 
-input, select{
+label{
+    display:block;
+    margin-top:18px;
+    margin-bottom:8px;
+    color:#d4af37;
+    font-weight:bold;
+}
+
+input,
+select{
     width:100%;
-    padding:12px;
-    margin:10px 0;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#2a2a2a;
+    color:white;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border:2px solid #d4af37;
 }
 
 button{
     width:100%;
-    padding:15px;
+    margin-top:28px;
+    padding:16px;
     border:none;
-    border-radius:10px;
-    color:white;
-    font-size:16px;
+    border-radius:14px;
+    font-size:17px;
+    font-weight:bold;
 }
 
-.save{
-    background:#111;
+.save-btn{
+    background:linear-gradient(135deg,#d4af37,#f5d76e);
+    color:black;
 }
 
-.delete{
-    background:#ff4d4d;
-    text-align:center;
+.delete-btn{
     display:block;
-    padding:15px;
-    border-radius:10px;
-    text-decoration:none;
-    color:white;
+    width:100%;
     margin-top:15px;
+    padding:16px;
+    border-radius:14px;
+    background:#ff4d4d;
+    color:white;
+    text-align:center;
+    text-decoration:none;
+    font-weight:bold;
+    box-sizing:border-box;
 }
 
 </style>
@@ -54,44 +108,99 @@ button{
 
 <body>
 
-<h2>✏️ Επεξεργασία Ραντεβού</h2>
+<div class="topbar">
+
+<a href="/calendar" class="back-btn">
+← Calendar
+</a>
+
+<h2>✏️ Επεξεργασία</h2>
+
+</div>
 
 <form method="POST">
 
+<label>Πελάτης</label>
 <input name="name" value="{{ appointment[1] }}" required>
 
+<label>Τηλέφωνο</label>
 <input name="phone" value="{{ appointment[2] }}" required>
+<label>Ημερομηνία</label>
 
-<input type="time" name="start_time" value="{{ appointment[3] }}" required>
+<input
+type="date"
+name="date"
+value="{{ appointment[3] }}"
+required>
+<label>Ώρα</label>
+<input type="time"
+name="start_time"
+value="{{ appointment[3] }}"
+required>
+
+<label>Διάρκεια</label>
 
 <select name="duration">
 
-<option value="20" {% if appointment[4] == 20 %}selected{% endif %}>20 λεπτά</option>
+<option value="20"
+{% if appointment[4] == 20 %}selected{% endif %}>
+20 λεπτά
+</option>
 
-<option value="30" {% if appointment[4] == 30 %}selected{% endif %}>30 λεπτά</option>
+<option value="30"
+{% if appointment[4] == 30 %}selected{% endif %}>
+30 λεπτά
+</option>
 
-<option value="45" {% if appointment[4] == 45 %}selected{% endif %}>45 λεπτά</option>
+<option value="45"
+{% if appointment[4] == 45 %}selected{% endif %}>
+45 λεπτά
+</option>
+
+<option value="60"
+{% if appointment[4] == 60 %}selected{% endif %}>
+60 λεπτά
+</option>
 
 </select>
+
+<label>Υπηρεσία</label>
 
 <select name="service">
 
-<option {% if appointment[5] == "Κούρεμα" %}selected{% endif %}>Κούρεμα</option>
+<option
+{% if appointment[5] == "Κούρεμα" %}selected{% endif %}>
+Κούρεμα
+</option>
 
-<option {% if appointment[5] == "Fade" %}selected{% endif %}>Fade</option>
+<option
+{% if appointment[5] == "Fade" %}selected{% endif %}>
+Fade
+</option>
 
-<option {% if appointment[5] == "Ξύρισμα" %}selected{% endif %}>Ξύρισμα</option>
+<option
+{% if appointment[5] == "Ξύρισμα" %}selected{% endif %}>
+Ξύρισμα
+</option>
 
-<option {% if appointment[5] == "Παιδικό" %}selected{% endif %}>Παιδικό</option>
+<option
+{% if appointment[5] == "Παιδικό" %}selected{% endif %}>
+Παιδικό
+</option>
 
 </select>
 
-<button class="save" type="submit">💾 Αποθήκευση</button>
+<button class="save-btn" type="submit">
+💾 Αποθήκευση
+</button>
 
 </form>
 
-<a class="delete" href="/delete/{{ appointment[0] }}">
+<a class="delete-btn"
+href="/delete/{{ appointment[0] }}">
+
 🗑 Διαγραφή Ραντεβού
+
 </a>
 
 </body>

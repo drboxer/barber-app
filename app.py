@@ -2,8 +2,30 @@ from flask import Flask, render_template, request, redirect
 import sqlite3
 from flask import jsonify
 from datetime import date
+import os
+import sqlite3
+
 
 app = Flask(__name__)
+
+if not os.path.exists("barber.db"):
+    conn = sqlite3.connect("barber.db")
+    c = conn.cursor()
+
+    c.execute("""
+    CREATE TABLE appointments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        phone TEXT,
+        date TEXT,
+        start_time TEXT,
+        duration INTEGER,
+        service TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 
 def to_minutes(time_str):
 

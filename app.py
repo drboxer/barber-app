@@ -8,6 +8,7 @@ import os
 
 app = Flask(__name__)
 
+
 if not os.path.exists("barber.db"):
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -27,6 +28,7 @@ if not os.path.exists("barber.db"):
     conn.commit()
     conn.close()
 
+
 def to_minutes(time_str):
 
     h, m = map(int, time_str.split(":"))
@@ -37,6 +39,17 @@ def to_minutes(time_str):
 def init_db():
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
+
+    # customers table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS customers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            phone TEXT UNIQUE,
+            notes TEXT,
+            created_at TEXT
+        )
+        """)
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS appointments (

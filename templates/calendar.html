@@ -81,6 +81,32 @@ body{
     font-weight:bold;
     border:1px solid #333;
 }
+
+.toast-container{
+
+    position:fixed;
+
+    top:20px;
+    right:20px;
+
+    z-index:9999;
+}
+
+.toast{
+
+    background:#1f1f1f;
+    color:white;
+
+    padding:14px 18px;
+
+    border-radius:14px;
+
+    margin-bottom:10px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
+
+    transition:all 0.3s ease;
+}
 </style>
 
 </head>
@@ -207,6 +233,47 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
 
+    <div class="toast-container">
+
+      {% for message in messages %}
+
+        <div class="toast">
+          {{ message }}
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+  {% endif %}
+{% endwith %}
+<script>
+
+setTimeout(() => {
+
+    const toasts =
+        document.querySelectorAll(".toast");
+
+    toasts.forEach(toast => {
+
+        toast.style.opacity = "0";
+
+        toast.style.transform =
+            "translateY(-10px)";
+
+        setTimeout(() => {
+
+            toast.remove();
+
+        }, 400);
+
+    });
+
+}, 3000);
+
+</script>
 </body>
 </html>

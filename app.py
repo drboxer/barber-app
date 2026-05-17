@@ -3,11 +3,13 @@ import sqlite3
 from flask import jsonify
 from datetime import date
 import os
+from flask import flash
 
 
 
 app = Flask(__name__)
 
+app.secret_key = "barber-secret"
 
 if not os.path.exists("barber.db"):
     conn = sqlite3.connect("barber.db")
@@ -172,6 +174,7 @@ def add():
         customer = c.fetchone()
 
         if not customer:
+
             c.execute(
                 """
                 INSERT INTO customers
@@ -186,6 +189,26 @@ def add():
             )
 
             conn.commit()
+
+            flash("✅ Νέος πελάτης καταχωρήθηκε")
+
+        else:
+
+            c.execute("""
+                SELECT notes
+                FROM customers
+                WHERE phone=?
+            """, (phone,))
+
+            notes = c.fetchone()[0]
+
+            if notes:
+
+                flash(f"📝 Notes: {notes}")
+
+            else:
+
+                flash("👤 Υπάρχων πελάτης")
 
         c.execute("""
             INSERT INTO appointments

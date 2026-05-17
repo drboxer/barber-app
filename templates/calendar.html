@@ -233,47 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
 
-    <div class="toast-container">
-
-      {% for message in messages %}
-
-        <div class="toast">
-          {{ message }}
-        </div>
-
-      {% endfor %}
-
-    </div>
-
-  {% endif %}
-{% endwith %}
-<script>
-
-setTimeout(() => {
-
-    const toasts =
-        document.querySelectorAll(".toast");
-
-    toasts.forEach(toast => {
-
-        toast.style.opacity = "0";
-
-        toast.style.transform =
-            "translateY(-10px)";
-
-        setTimeout(() => {
-
-            toast.remove();
-
-        }, 400);
-
-    });
-
-}, 3000);
-
-</script>
 </body>
 </html>

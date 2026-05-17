@@ -123,6 +123,26 @@ button{
         transform:translateY(0);
     }
 }
+.live-toast{
+
+    position:fixed;
+
+    top:20px;
+    right:20px;
+
+    background:#1f1f1f;
+    color:white;
+
+    padding:14px 18px;
+
+    border-radius:14px;
+
+    opacity:0;
+
+    transition:all 0.3s ease;
+
+    z-index:9999;
+}
 </style>
 
 </head>
@@ -179,6 +199,9 @@ value="{{ selected_time }}" required>
 </button>
 
 </form>
+<div id="liveToast" class="live-toast"></div>
+<div id="liveToast" class="live-toast"></div>
+
 <script>
 
 const phoneInput =
@@ -187,71 +210,85 @@ const phoneInput =
 const nameInput =
     document.getElementById("name");
 
-phoneInput.addEventListener("input", async function(){
+const toast =
+    document.getElementById("liveToast");
 
-    const phone = this.value;
+let lastPhone = "";
 
-    if(phone.length < 3) return;
+function showToast(message){
 
-    try {
+    toast.innerText = message;
 
-        const res =
-            await fetch("/search_customer?phone=" + phone);
+    toast.style.opacity = "1";
 
-        const data =
-            await res.json();
+    toast.style.transform = "translateY(0)";
 
-        if(data.name){
-            nameInput.value = data.name;
-        }
+    clearTimeout(window.toastTimeout);
 
-    } catch(err){
-        console.log("Search error", err);
-    }
-
-});
-
-</script>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-
-    <div class="toast-container">
-
-      {% for message in messages %}
-
-        <div class="toast">
-          {{ message }}
-        </div>
-
-      {% endfor %}
-
-    </div>
-
-  {% endif %}
-{% endwith %}
-<script>
-
-setTimeout(() => {
-
-    const toasts =
-        document.querySelectorAll(".toast");
-
-    toasts.forEach(toast => {
+    window.toastTimeout = setTimeout(() => {
 
         toast.style.opacity = "0";
 
         toast.style.transform =
             "translateY(-10px)";
 
-        setTimeout(() => {
+    }, 3000);
+}
 
-            toast.remove();
+phoneInput.addEventListener("input", async function(){
 
-        }, 400);
+    const phone = this.value;
 
-    });
+    if(phone.length < 3){
+        return;
+    }
 
-}, 3000);
+    if(phone === lastPhone){
+        return;
+    }
+
+    lastPhone = phone;
+
+    try {
+
+        const response =
+            await fetch(
+                "/search_customer?phone=" + phone
+            );
+
+        const data =
+            await response.json();
+
+        if(data.name){
+
+            nameInput.value = data.name;
+
+            if(data.notes){
+
+                showToast(
+                    "📝 " + data.notes
+                );
+
+            } else {
+
+                showToast(
+                    "👤 Υπάρχων πελάτης"
+                );
+            }
+
+        } else {
+
+            showToast(
+                "✅ Νέος πελάτης"
+            );
+        }
+
+    } catch(err){
+
+        console.log(err);
+    }
+
+});
 
 </script>
 </body>

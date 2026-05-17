@@ -190,7 +190,6 @@ def add():
 
             conn.commit()
 
-            flash("✅ Νέος πελάτης καταχωρήθηκε")
 
         else:
 
@@ -202,13 +201,7 @@ def add():
 
             notes = c.fetchone()[0]
 
-            if notes:
 
-                flash(f"📝 Notes: {notes}")
-
-            else:
-
-                flash("👤 Υπάρχων πελάτης")
 
         c.execute("""
             INSERT INTO appointments
@@ -505,7 +498,7 @@ def search_customer():
 
     c.execute(
         """
-        SELECT name, phone
+        SELECT name, phone, notes
         FROM customers
         WHERE phone LIKE ?
         LIMIT 1
@@ -518,11 +511,11 @@ def search_customer():
     conn.close()
 
     if customer:
-
-        return {
+        return jsonify({
             "name": customer[0],
-            "phone": customer[1]
-        }
+            "phone": customer[1],
+            "notes": customer[2]
+        })
 
     return jsonify({})
 

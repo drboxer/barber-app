@@ -141,6 +141,16 @@ required>
 
 <select name="duration">
 
+<option value="10"
+{% if appointment[4] == 10 %}selected{% endif %}>
+10 λεπτά
+</option>
+
+<option value="15"
+{% if appointment[4] == 15 %}selected{% endif %}>
+15 λεπτά
+</option>
+
 <option value="20"
 {% if appointment[4] == 20 %}selected{% endif %}>
 20 λεπτά
@@ -149,16 +159,6 @@ required>
 <option value="30"
 {% if appointment[4] == 30 %}selected{% endif %}>
 30 λεπτά
-</option>
-
-<option value="45"
-{% if appointment[4] == 45 %}selected{% endif %}>
-45 λεπτά
-</option>
-
-<option value="60"
-{% if appointment[4] == 60 %}selected{% endif %}>
-60 λεπτά
 </option>
 
 </select>

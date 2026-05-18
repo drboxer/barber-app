@@ -4,12 +4,13 @@ from flask import jsonify
 from datetime import date
 import os
 from flask import flash
+from flask import session
 
 
 
 app = Flask(__name__)
 
-app.secret_key = "barber-secret"
+app.secret_key = "supersecretkey"
 
 if not os.path.exists("barber.db"):
     conn = sqlite3.connect("barber.db")
@@ -69,9 +70,38 @@ def init_db():
 
 init_db()
 
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if (
+            username == "admin" and
+            password == "1234"
+        ):
+
+            session["logged_in"] = True
+
+            return redirect("/")
+
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/login")
+
 # ---------------- HOME ----------------
 @app.route("/")
 def index():
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     today = date.today().isoformat()
 
@@ -116,6 +146,8 @@ def index():
 # ---------------- ADD ----------------
 @app.route("/add", methods=["GET", "POST"])
 def add():
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -234,6 +266,8 @@ def add():
 
 @app.route("/calendar")
 def calendar():
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -282,7 +316,7 @@ def calendar():
 
             "id": a[0],
 
-            "title": f"{a[1]} - {a[6]}",
+            "title": f"{a[1]} • {a[6]}",
 
             "start": start_datetime,
 
@@ -301,6 +335,8 @@ def calendar():
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -339,6 +375,8 @@ def edit(id):
 
 @app.route("/delete/<int:id>")
 def delete(id):
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -397,6 +435,8 @@ def resize_appointment():
 
 @app.route("/customers")
 def customers():
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
 
@@ -419,6 +459,8 @@ def customers():
 
 @app.route("/customer/<int:id>")
 def customer(id):
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
 
@@ -453,6 +495,8 @@ def customer(id):
 
 @app.route("/update_customer/<int:id>", methods=["POST"])
 def update_customer(id):
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     notes = request.form["notes"]
 
@@ -472,6 +516,8 @@ def update_customer(id):
 
 @app.route("/delete_customer/<int:id>")
 def delete_customer(id):
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
 

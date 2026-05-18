@@ -52,11 +52,18 @@ body{
 
 
 .fc-event{
-    border:none !important;
-    border-radius:12px !important;
-    padding:4px;
-    font-size:14px;
-    font-weight:bold;
+
+    min-height:45px;
+
+    padding:4px 6px;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:13px;
+
+    font-weight:600;
 }
 
 .fc-theme-standard td,
@@ -143,9 +150,19 @@ document.addEventListener('DOMContentLoaded', function() {
     slotMinTime: "07:00:00",
     slotMaxTime: "22:00:00",
 
-    slotDuration: "00:30:00",
+    slotDuration: "00:15:00",
+
+    slotLabelInterval: "00:30",
 
     expandRows: true,
+
+    displayEventEnd: false,
+
+    contentHeight: "auto",
+
+    height: "auto",
+
+    aspectRatio: 1.2,
 
     nowIndicator: true,
 

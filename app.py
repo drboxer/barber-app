@@ -5,6 +5,10 @@ from datetime import date
 import os
 from flask import flash
 from flask import session
+from datetime import datetime
+
+today = datetime.now().strftime("%Y-%m-%d")
+current_time = datetime.now().strftime("%H:%M")
 
 
 
@@ -133,6 +137,17 @@ def index():
         """)
 
     next_appointment = c.fetchone()
+
+    c.execute("""
+        SELECT start_time, name, service
+        FROM appointments
+        WHERE date = ?
+        AND start_time >= ?
+        ORDER BY start_time ASC
+    """, (today, current_time))
+
+    today_timeline = c.fetchall()
+
     conn.close()
 
     return render_template(
@@ -140,7 +155,8 @@ def index():
         appointments=appointments,
         estimated=estimated,
         next_appointment=next_appointment,
-        customer_count=customer_count
+        customer_count=customer_count,
+        today_timeline=today_timeline
     )
 
 # ---------------- ADD ----------------

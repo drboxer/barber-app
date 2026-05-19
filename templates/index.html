@@ -211,6 +211,31 @@ body{
 {% endif %}
 
 </div>
+
+<div class="card">
+
+<h3>📍 Επόμενα Ραντεβού</h3>
+
+{% if today_timeline %}
+
+    {% for a in today_timeline %}
+
+        <p>
+        ⏰ {{ a[0] }}
+        • 👤 {{ a[1] }}
+        • 💈 {{ a[2] }}
+        </p>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>Δεν υπάρχουν επόμενα ραντεβού.</p>
+
+{% endif %}
+
+</div>
+
 <div class="card">
 
 <h3>👤 Πελάτες</h3>

@@ -87,6 +87,7 @@ body{
 
 <h2>👤 Πελατολόγιο</h2>
 
+
 </div>
 <input
 type="text"
@@ -94,6 +95,18 @@ id="searchInput"
 placeholder="🔍 Αναζήτηση πελάτη..."
 class="search"
 />
+<a
+href="/export_customers"
+class="open-btn"
+style="
+display:block;
+text-align:center;
+margin-bottom:20px;
+">
+
+⬇ Export CSV
+
+</a>
 {% for c in customers %}
 
 <div class="customer-card">

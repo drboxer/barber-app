@@ -5,7 +5,10 @@ from datetime import date
 import os
 from flask import flash
 from flask import session
+import csv
+from flask import Response
 from datetime import datetime
+import io
 
 today = datetime.now().strftime("%Y-%m-%d")
 current_time = datetime.now().strftime("%H:%M")
@@ -104,8 +107,8 @@ def logout():
 # ---------------- HOME ----------------
 @app.route("/")
 def index():
-    if not session.get("logged_in"):
-        return redirect("/login")
+    # if not session.get("logged_in"):
+    #     return redirect("/login")
 
     today = date.today().isoformat()
 
@@ -162,8 +165,8 @@ def index():
 # ---------------- ADD ----------------
 @app.route("/add", methods=["GET", "POST"])
 def add():
-    if not session.get("logged_in"):
-        return redirect("/login")
+    # if not session.get("logged_in"):
+    #     return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -282,8 +285,8 @@ def add():
 
 @app.route("/calendar")
 def calendar():
-    if not session.get("logged_in"):
-        return redirect("/login")
+    # if not session.get("logged_in"):
+    #     return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -351,8 +354,8 @@ def calendar():
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
-    if not session.get("logged_in"):
-        return redirect("/login")
+    # if not session.get("logged_in"):
+    #     return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -391,8 +394,8 @@ def edit(id):
 
 @app.route("/delete/<int:id>")
 def delete(id):
-    if not session.get("logged_in"):
-        return redirect("/login")
+    # if not session.get("logged_in"):
+    #     return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -451,8 +454,8 @@ def resize_appointment():
 
 @app.route("/customers")
 def customers():
-    if not session.get("logged_in"):
-        return redirect("/login")
+    # if not session.get("logged_in"):
+    #     return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
 
@@ -475,8 +478,8 @@ def customers():
 
 @app.route("/customer/<int:id>")
 def customer(id):
-    if not session.get("logged_in"):
-        return redirect("/login")
+    # if not session.get("logged_in"):
+    #     return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
 
@@ -532,8 +535,8 @@ def update_customer(id):
 
 @app.route("/delete_customer/<int:id>")
 def delete_customer(id):
-    if not session.get("logged_in"):
-        return redirect("/login")
+    # if not session.get("logged_in"):
+    #     return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
 
@@ -580,6 +583,49 @@ def search_customer():
         })
 
     return jsonify({})
+
+@app.route("/export_customers")
+def export_customers():
+
+    conn = sqlite3.connect("barber.db")
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT name, phone, notes, created_at
+        FROM customers
+        ORDER BY name
+    """)
+
+    customers = c.fetchall()
+
+    conn.close()
+
+    output = io.StringIO()
+
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "Name",
+        "Phone",
+        "Notes",
+        "Created At"
+    ])
+
+    writer.writerows(customers)
+
+    csv_data = output.getvalue()
+
+    output.close()
+
+    return Response(
+        csv_data,
+        mimetype="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition":
+            "attachment; filename=customers.csv"
+        }
+    )
+
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":

@@ -47,36 +47,63 @@ def to_minutes(time_str):
 
 # ---------------- DB ----------------
 def init_db():
+
     conn = sqlite3.connect("barber.db")
+
     c = conn.cursor()
 
-    # customers table
     c.execute("""
-        CREATE TABLE IF NOT EXISTS customers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            phone TEXT UNIQUE,
-            notes TEXT,
-            created_at TEXT
-        )
-        """)
+    CREATE TABLE IF NOT EXISTS customers (
 
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS appointments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            phone TEXT,
-            start_time TEXT,
-            duration INTEGER,
-            service TEXT
-        )
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        name TEXT,
+
+        phone TEXT UNIQUE,
+
+        notes TEXT,
+
+        created_at TEXT
+
+    )
     """)
 
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS appointments (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        name TEXT,
+
+        phone TEXT,
+
+        start_time TEXT,
+
+        duration INTEGER,
+
+        service TEXT
+
+    )
+    """)
+
+    try:
+
+        c.execute("""
+        ALTER TABLE appointments
+        ADD COLUMN status TEXT
+        DEFAULT 'scheduled'
+        """)
+
+    except sqlite3.OperationalError:
+
+        pass
+
     conn.commit()
+
     conn.close()
 
-init_db()
 
+init_db()
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

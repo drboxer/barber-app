@@ -2,11 +2,8 @@
 <html lang="el">
 
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>{{ customer[1] }}</title>
+<title>Customer</title>
 
 <style>
 
@@ -20,42 +17,9 @@ body{
 
 .card{
     background:#1b1b1b;
-    border-radius:20px;
-    padding:24px;
-    margin-bottom:22px;
-}
-
-.history-item{
-    background:#222;
-    border-radius:14px;
-    padding:16px;
-    margin-bottom:14px;
-}
-
-.small{
-    color:#bbb;
-}
-
-.back-btn{
-    display:inline-block;
-    margin-bottom:20px;
-    text-decoration:none;
-    background:linear-gradient(135deg,#d4af37,#f5d76e);
-    color:black;
-    padding:12px 18px;
-    border-radius:12px;
-    font-weight:bold;
-}
-
-textarea{
-    width:100%;
-    min-height:120px;
-    border:none;
-    border-radius:14px;
-    padding:14px;
-    background:#2a2a2a;
-    color:white;
-    box-sizing:border-box;
+    padding:20px;
+    border-radius:16px;
+    margin-bottom:15px;
 }
 
 </style>
@@ -64,61 +28,39 @@ textarea{
 
 <body>
 
-<a href="/customers" class="back-btn">
-⬅ Πελατολόγιο
-</a>
-
 <div class="card">
 
-<h1>{{ customer[1] }}</h1>
+<h2>👤 {{ customer[1] }}</h2>
 
-<p class="small">📞 {{ customer[2] }}</p>
+<p>📞 {{ customer[2] }}</p>
 
-<h3>📝 Notes</h3>
+<p>📝 {{ customer[3] if customer[3] else "No notes" }}</p>
 
-<form method="POST" action="/update_customer/{{ customer[0] }}">
-
-<textarea name="notes">
-{{ customer[3] or '' }}
-</textarea>
-
-<button type="submit">
-💾 Αποθήκευση Notes
-</button>
-
-</form>
+<p>📅 Joined: {{ customer[4] }}</p>
 
 </div>
 
 <div class="card">
 
-<h2>📅 History</h2>
+<h3>📅 History</h3>
 
-{% for a in appointments %}
+{% if history %}
 
-<div class="history-item">
+    {% for h in history %}
 
-<strong>{{ a[3] }}</strong>
+        <p>
+        {{ h[0] }} • {{ h[1] }} • {{ h[2] }}
+        </p>
 
-—
+    {% endfor %}
 
-{{ a[6] }}
+{% else %}
 
-at
+    <p>No appointments yet</p>
 
-{{ a[4] }}
-
-</div>
-
-{% endfor %}
+{% endif %}
 
 </div>
-<a
-href="/delete_customer/{{ customer[0] }}"
-onclick="return confirm('Διαγραφή πελάτη;')"
-class="delete-btn"
->
-🗑 Διαγραφή Πελάτη
-</a>
+
 </body>
 </html>

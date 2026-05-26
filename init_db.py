@@ -19,7 +19,9 @@ CREATE TABLE appointments (
 
     duration INTEGER,
 
-    service TEXT
+    service TEXT,
+    
+    status TEXT DEFAULT 'scheduled'
 )
 """)
 

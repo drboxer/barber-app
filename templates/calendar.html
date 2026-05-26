@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -177,12 +177,10 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     eventClick: function(info) {
 
-    const appointmentId = info.event.id;
+    openModal(info.event.id);
 
-    window.location.href = "/edit/" + appointmentId;
-    },
+},
     editable: true,
-    height: "auto",
     eventDrop: function(info) {
 
     const eventId = info.event.id;
@@ -246,10 +244,95 @@ document.addEventListener('DOMContentLoaded', function() {
     events: {{ events|tojson }}
 
 });
-    calendar.render();
+calendar.render();
 });
 
 </script>
 
+<div id="eventModal" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,0.7);
+
+z-index:99999;
+">
+
+<div style="
+background:#1b1b1b;
+padding:20px;
+border-radius:16px;
+width:300px;
+margin:auto;
+text-align:center;
+">
+
+<h3>Update Appointment</h3>
+
+<button onclick="updateStatus('completed')">
+✔ Completed
+</button>
+
+<button onclick="updateStatus('cancelled')">
+✖ Cancelled
+</button>
+
+<button onclick="updateStatus('no_show')">
+⚫ No-show
+</button>
+
+<br><br>
+
+<button onclick="closeModal()">
+Close
+</button>
+
+</div>
+</div>
+<script>
+
+let selectedEventId = null;
+
+function openModal(id){
+
+    selectedEventId = id;
+
+    const modal =
+        document.getElementById("eventModal");
+
+    modal.style.display = "flex";
+
+    modal.style.alignItems = "center";
+
+    modal.style.justifyContent = "center";
+}
+
+function closeModal(){
+    document.getElementById("eventModal").style.display = "none";
+}
+
+function updateStatus(status){
+
+    fetch("/appointment/" + selectedEventId + "/status", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ status: status })
+    }).then(() => {
+
+        closeModal();
+        location.reload();
+
+    });
+
+}
+
+</script>
 </body>
 </html>

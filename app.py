@@ -292,7 +292,7 @@ def calendar():
     c = conn.cursor()
 
     c.execute("""
-        SELECT id, name, phone, date, start_time, duration, service
+        SELECT id, name, phone, date, start_time, duration, service, status
         FROM appointments
         ORDER BY start_time
     """)
@@ -310,41 +310,36 @@ def calendar():
 
         return f"{total // 60:02d}:{total % 60:02d}"
 
-
     events = []
 
     for a in appointments:
 
         end_time = add_minutes(a[4], a[5])
 
-        color = "#3788d8"
+        status = a[7]
 
-        if a[6] == "Fade":
-            color = "#ff4d4d"
+        if status == "completed":
+            color = "#2ecc71"
 
-        elif a[6] == "Ξύρισμα":
-            color = "#222222"
+        elif status == "cancelled":
+            color = "#e74c3c"
 
-        elif a[6] == "Παιδικό":
-            color = "#4CAF50"
+        elif status == "no_show":
+            color = "#95a5a6"
+
+        else:
+            color = "#3788d8"
 
         start_datetime = f"{a[3]}T{a[4]}"
         end_datetime = f"{a[3]}T{end_time}"
 
         events.append({
-
             "id": a[0],
-
             "title": f"{a[1]} • {a[6]}",
-
             "start": start_datetime,
-
             "end": end_datetime,
-
             "backgroundColor": color,
-
             "borderColor": color
-
         })
 
     return render_template(
@@ -476,40 +471,39 @@ def customers():
         customers=customers
     )
 
-@app.route("/customer/<int:id>")
-def customer(id):
-    # if not session.get("logged_in"):
-    #     return redirect("/login")
+@app.route("/customer/<int:customer_id>")
+def customer_profile(customer_id):
 
     conn = sqlite3.connect("barber.db")
-
     c = conn.cursor()
 
-    c.execute(
-        "SELECT * FROM customers WHERE id=?",
-        (id,)
-    )
+    # customer info
+    c.execute("""
+        SELECT id, name, phone, notes, created_at
+        FROM customers
+        WHERE id = ?
+    """, (customer_id,))
 
     customer = c.fetchone()
 
-    c.execute(
-        """
-        SELECT *
+    # history (appointments)
+    c.execute("""
+        SELECT date, start_time, service
         FROM appointments
-        WHERE phone=?
+        WHERE phone = (
+            SELECT phone FROM customers WHERE id = ?
+        )
         ORDER BY date DESC, start_time DESC
-        """,
-        (customer[2],)
-    )
+    """, (customer_id,))
 
-    appointments = c.fetchall()
+    history = c.fetchall()
 
     conn.close()
 
     return render_template(
         "customer.html",
         customer=customer,
-        appointments=appointments
+        history=history
     )
 
 @app.route("/update_customer/<int:id>", methods=["POST"])
@@ -625,6 +619,26 @@ def export_customers():
             "attachment; filename=customers.csv"
         }
     )
+
+@app.route("/appointment/<int:id>/status", methods=["POST"])
+def update_status(id):
+
+    data = request.get_json()
+    status = data["status"]
+
+    conn = sqlite3.connect("barber.db")
+    c = conn.cursor()
+
+    c.execute("""
+        UPDATE appointments
+        SET status = ?
+        WHERE id = ?
+    """, (status, id))
+
+    conn.commit()
+    conn.close()
+
+    return {"ok": True}
 
 
 # ---------------- RUN ----------------

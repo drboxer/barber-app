@@ -22,11 +22,53 @@ body{
     margin-bottom:15px;
 }
 
+.visit{
+
+background:#1a1a1a;
+
+padding:16px;
+
+margin-bottom:10px;
+
+border-radius:14px;
+
+}
+
+.back-btn{
+
+display:inline-block;
+
+margin-bottom:18px;
+
+padding:10px 14px;
+
+background:#1f1f1f;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:12px;
+
+border:1px solid #333;
+
+font-weight:bold;
+
+}
+
+.back-btn:hover{
+
+background:#292929;
+
+}
 </style>
 
 </head>
 
 <body>
+<a href="/customers" class="back-btn">
+← Πελατολόγιο
+</a>
 
 <div class="card">
 
@@ -36,31 +78,118 @@ body{
 
 <p>📝 {{ customer[3] if customer[3] else "No notes" }}</p>
 
+<form method="POST">
+
+<textarea
+name="notes"
+rows="5"
+style="
+width:100%;
+background:#1a1a1a;
+color:white;
+border:none;
+border-radius:12px;
+padding:12px;
+">
+
+{{ customer[3] or "" }}
+
+</textarea>
+
+<br><br>
+
+<button type="submit">
+
+💾 Save Notes
+
+</button>
+
+</form>
+
 <p>📅 Joined: {{ customer[4] }}</p>
 
 </div>
 
 <div class="card">
 
-<h3>📅 History</h3>
+<p>
+📅 Visits:
+{{ visits }}
+</p>
 
-{% if history %}
+<p>
+🕒 Last:
+{{ last_visit }}
+</p>
 
-    {% for h in history %}
+<p>
+⭐ Favorite:
+{{ favorite }}
+</p>
 
-        <p>
-        {{ h[0] }} • {{ h[1] }} • {{ h[2] }}
-        </p>
+</div>
+<div class="card">
 
-    {% endfor %}
+<h3>⏭ Next Appointment</h3>
+
+{% if next_appointment %}
+
+<p>
+📅 {{ next_appointment[0] }}
+</p>
+
+<p>
+🕒 {{ next_appointment[1] }}
+</p>
+
+<p>
+✂ {{ next_appointment[2] }}
+</p>
 
 {% else %}
 
-    <p>No appointments yet</p>
+<p>
+No upcoming appointment
+</p>
 
 {% endif %}
 
 </div>
+
+<div class="card">
+
+<h3>📅 Ιστορικό</h3>
+
+
+{% for a in appointments %}
+
+<div class="visit">
+<div>
+{{ a[0] }} {{ a[1] }}
+</div>
+
+<div>
+{{ a[2] }}
+</div>
+
+<div>
+
+{% if a[3]=="completed" %}
+✔
+
+{% elif a[3]=="cancelled" %}
+✖
+
+{% else %}
+🕒
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% endfor %}
 
 </body>
 </html>

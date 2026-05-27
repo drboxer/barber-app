@@ -180,13 +180,44 @@ def index():
 
     conn.close()
 
+    conn = sqlite3.connect("barber.db")
+    c = conn.cursor()
+    c.execute("""
+    SELECT COUNT(*)
+    FROM appointments
+    WHERE status='completed'
+    """)
+
+    completed = c.fetchone()[0]
+    revenue = completed * 15
+    c.execute("""
+    SELECT COUNT(*)
+    FROM appointments
+    WHERE status='scheduled'
+    """)
+
+    upcoming = c.fetchone()[0]
+    c.execute("""
+    SELECT COUNT(*)
+    FROM appointments
+    WHERE status='cancelled'
+    """)
+
+    cancelled = c.fetchone()[0]
+
+
+
     return render_template(
         "index.html",
         appointments=appointments,
         estimated=estimated,
         next_appointment=next_appointment,
         customer_count=customer_count,
-        today_timeline=today_timeline
+        today_timeline=today_timeline,
+        revenue=revenue,
+        completed=completed,
+        upcoming=upcoming,
+        cancelled=cancelled
     )
 
 # ---------------- ADD ----------------
@@ -498,39 +529,113 @@ def customers():
         customers=customers
     )
 
-@app.route("/customer/<int:customer_id>")
-def customer_profile(customer_id):
+@app.route(
+"/customer/<int:id>",
+methods=["GET","POST"]
+)
+def customer_profile(id):
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
 
-    # customer info
+    if request.method == "POST":
+
+        notes = request.form["notes"]
+
+        c.execute("""
+        UPDATE customers
+        SET notes=?
+        WHERE id=?
+        """, (notes, id))
+
+        conn.commit()
+
     c.execute("""
-        SELECT id, name, phone, notes, created_at
-        FROM customers
-        WHERE id = ?
-    """, (customer_id,))
+    SELECT *
+    FROM customers
+    WHERE id=?
+    """, (id,))
 
     customer = c.fetchone()
 
-    # history (appointments)
-    c.execute("""
-        SELECT date, start_time, service
-        FROM appointments
-        WHERE phone = (
-            SELECT phone FROM customers WHERE id = ?
-        )
-        ORDER BY date DESC, start_time DESC
-    """, (customer_id,))
+    phone = customer[2]
 
-    history = c.fetchall()
+    c.execute("""
+    SELECT
+        date,
+        start_time,
+        service,
+        status
+
+    FROM appointments
+
+    WHERE phone=?
+
+    ORDER BY date DESC
+    """, (phone,))
+
+    appointments = c.fetchall()
+
+    c.execute("""
+    SELECT
+    COUNT(*),
+    MAX(date)
+
+    FROM appointments
+
+    WHERE phone=?
+    AND status='completed'
+    """, (phone,))
+
+    stats = c.fetchone()
+    visits = stats[0]
+    last_visit = stats[1]
+
+    c.execute("""
+    SELECT service
+
+    FROM appointments
+
+    WHERE phone=?
+
+    GROUP BY service
+
+    ORDER BY COUNT(*) DESC
+
+    LIMIT 1
+    """, (phone,))
+    fav = c.fetchone()
+
+    favorite = fav[0] if fav else "-"
+
+    c.execute("""
+    SELECT
+    date,
+    start_time,
+    service
+
+    FROM appointments
+
+    WHERE phone=?
+    AND status='scheduled'
+
+    ORDER BY date,start_time
+
+    LIMIT 1
+    """, (phone,))
+
+    next_appointment = c.fetchone()
 
     conn.close()
 
     return render_template(
         "customer.html",
         customer=customer,
-        history=history
+        appointments=appointments,
+        visits=visits,
+        last_visit=last_visit,
+        favorite=favorite,
+        next_appointment=next_appointment
     )
 
 @app.route("/update_customer/<int:id>", methods=["POST"])

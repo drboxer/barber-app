@@ -134,6 +134,31 @@ body{
     font-size:14px;
 }
 
+.stats{
+
+display:grid;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:12px;
+
+margin-bottom:20px;
+
+}
+
+.card{
+
+background:#1b1b1b;
+
+padding:18px;
+
+border-radius:18px;
+
+text-align:center;
+
+}
+
 </style>
 
 </head>
@@ -161,6 +186,29 @@ body{
 
 
 <div class="container">
+<div class="stats">
+
+<div class="card">
+💰
+<h2>€{{ revenue }}</h2>
+</div>
+
+<div class="card">
+✂
+<h2>{{ completed }}</h2>
+</div>
+
+<div class="card">
+📅
+<h2>{{ upcoming }}</h2>
+</div>
+
+<div class="card">
+❌
+<h2>{{ cancelled }}</h2>
+</div>
+
+</div>
 
 <div class="card">
 

@@ -72,7 +72,6 @@ body{
 
 .stats{
     display:grid;
-    grid-template-columns:1fr 1fr;
     gap:15px;
 }
 
@@ -159,8 +158,42 @@ text-align:center;
 
 }
 
-</style>
+.stat-card{
 
+background:#1b1b1b;
+
+padding:20px;
+
+border-radius:18px;
+
+text-align:center;
+
+box-shadow:0 2px 15px rgba(0,0,0,0.3);
+
+}
+
+.stat-card h3{
+
+margin-top:0;
+
+color:#bbb;
+
+font-size:15px;
+
+}
+
+.stat-card p{
+
+font-size:30px;
+
+font-weight:bold;
+
+margin-bottom:0;
+
+}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -186,6 +219,25 @@ text-align:center;
 
 
 <div class="container">
+
+<div class="stats">
+
+<div class="stat-card">
+<h3>💰 Σήμερα</h3>
+<p>€{{ today_revenue }}</p>
+</div>
+
+<div class="stat-card">
+<h3>✂ Completed</h3>
+<p>{{ completed_today }}</p>
+</div>
+
+<div class="stat-card">
+<h3>📅 Μήνας</h3>
+<p>€{{ month_revenue }}</p>
+</div>
+
+</div>
 <div class="stats">
 
 <div class="card">
@@ -229,7 +281,13 @@ text-align:center;
 </div>
 
 </div>
+<div class="card">
 
+<h3>📈 Revenue Trend</h3>
+
+<canvas id="revenueChart"></canvas>
+
+</div>
 <div class="card">
 
 <h3>⏭ Επόμενος Πελάτης</h3>
@@ -317,6 +375,83 @@ text-align:center;
 </div>
 
 </div>
+<script>
 
+const ctx =
+document.getElementById('revenueChart');
+
+new Chart(ctx, {
+
+type: 'line',
+
+data: {
+
+labels: {{ chart_labels|tojson }},
+
+datasets: [{
+
+label: 'Revenue',
+
+data: {{ chart_values|tojson }},
+
+borderColor: '#d4af37',
+
+backgroundColor: 'rgba(212,175,55,0.2)',
+
+tension: 0.4,
+
+fill: true
+
+}]
+
+},
+
+options: {
+
+responsive: true,
+
+plugins: {
+
+legend: {
+
+labels: {
+
+color: 'white'
+
+}
+
+}
+
+},
+
+scales: {
+
+x: {
+
+ticks: {
+
+color: 'white'
+
+}
+
+},
+
+y: {
+
+ticks: {
+
+color: 'white'
+
+}
+
+}
+
+}
+
+}
+
+});
+
+</script>
 </body>
 </html>

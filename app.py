@@ -12,6 +12,16 @@ import io
 
 today = datetime.now().strftime("%Y-%m-%d")
 current_time = datetime.now().strftime("%H:%M")
+SERVICE_PRICES = {
+
+    "Fade": 18,
+
+    "Ξύρισμα": 10,
+
+    "Παιδικό": 12,
+
+    "Κούρεμα" : 10
+}
 
 
 
@@ -98,12 +108,23 @@ def init_db():
 
         pass
 
+    try:
+
+        c.execute("""
+        ALTER TABLE appointments
+        ADD COLUMN price INTEGER
+        """)
+
+    except sqlite3.OperationalError:
+        pass
+
     conn.commit()
 
     conn.close()
 
 
 init_db()
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -178,18 +199,42 @@ def index():
 
     today_timeline = c.fetchall()
 
-    conn.close()
 
-    conn = sqlite3.connect("barber.db")
-    c = conn.cursor()
+    # conn = sqlite3.connect("barber.db")
+    # c = conn.cursor()
     c.execute("""
     SELECT COUNT(*)
+
     FROM appointments
+
     WHERE status='completed'
+    AND date=?
+    """, (today,))
+
+    completed_today = c.fetchone()[0]
+
+    c.execute("""
+    SELECT SUM(price)
+
+    FROM appointments
+
+    WHERE status='completed'
+    AND date=?
+    """, (today,))
+
+    today_revenue = c.fetchone()[0] or 0
+
+    c.execute("""
+    SELECT SUM(price)
+
+    FROM appointments
+
+    WHERE status='completed'
+    AND strftime('%Y-%m', date)=strftime('%Y-%m','now')
     """)
 
-    completed = c.fetchone()[0]
-    revenue = completed * 15
+    month_revenue = c.fetchone()[0] or 0
+
     c.execute("""
     SELECT COUNT(*)
     FROM appointments
@@ -205,7 +250,35 @@ def index():
 
     cancelled = c.fetchone()[0]
 
+    c.execute("""
 
+    SELECT
+    date,
+    SUM(COALESCE(price,0))
+
+    FROM appointments
+
+    WHERE status='completed'
+
+    GROUP BY date
+
+    ORDER BY date ASC
+
+    LIMIT 7
+
+    """)
+
+    chart_data = c.fetchall()
+
+    conn.close()
+
+    chart_labels = []
+    chart_values = []
+
+    for row in chart_data:
+        chart_labels.append(row[0])
+
+        chart_values.append(row[1])
 
     return render_template(
         "index.html",
@@ -214,10 +287,13 @@ def index():
         next_appointment=next_appointment,
         customer_count=customer_count,
         today_timeline=today_timeline,
-        revenue=revenue,
-        completed=completed,
         upcoming=upcoming,
-        cancelled=cancelled
+        cancelled=cancelled,
+        today_revenue=today_revenue,
+        completed_today=completed_today,
+        month_revenue=month_revenue,
+        chart_labels=chart_labels,
+        chart_values=chart_values
     )
 
 # ---------------- ADD ----------------
@@ -241,6 +317,9 @@ def add():
         duration = int(request.form["duration"])
 
         service = request.form["service"]
+
+        price = SERVICE_PRICES.get(service, 0)
+
 
         # conflict check
         c.execute("""
@@ -314,16 +393,26 @@ def add():
 
         c.execute("""
             INSERT INTO appointments
-            (name, phone, date, start_time, duration, service)
-            VALUES (?, ?, ?, ?, ?, ?)
+            (name, phone, date, start_time, duration, service, price)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             name,
             phone,
             date,
             start_time,
             duration,
-            service
+            service,
+            price
         ))
+
+        # c.execute("""
+        # SELECT SUM(price)
+        # FROM appointments
+        # WHERE status='completed'
+        # """)
+        #
+        # revenue = c.fetchone()[0] or 0
+        # print(revenue)
 
         conn.commit()
         conn.close()
@@ -350,7 +439,7 @@ def calendar():
     c = conn.cursor()
 
     c.execute("""
-        SELECT id, name, phone, date, start_time, duration, service, status
+        SELECT id, name, phone, date, start_time, duration, service, status, price
         FROM appointments
         ORDER BY start_time
     """)
@@ -393,7 +482,7 @@ def calendar():
 
         events.append({
             "id": a[0],
-            "title": f"{a[1]} • {a[6]}",
+            "title": f"{a[1]} • {a[6]} • €{a[8]}",
             "start": start_datetime,
             "end": end_datetime,
             "backgroundColor": color,

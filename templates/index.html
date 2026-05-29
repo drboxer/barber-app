@@ -146,17 +146,6 @@ margin-bottom:20px;
 
 }
 
-.card{
-
-background:#1b1b1b;
-
-padding:18px;
-
-border-radius:18px;
-
-text-align:center;
-
-}
 
 .stat-card{
 
@@ -193,7 +182,7 @@ margin-bottom:0;
 }
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
@@ -220,47 +209,6 @@ margin-bottom:0;
 
 <div class="container">
 
-<div class="stats">
-
-<div class="stat-card">
-<h3>💰 Σήμερα</h3>
-<p>€{{ today_revenue }}</p>
-</div>
-
-<div class="stat-card">
-<h3>✂ Completed</h3>
-<p>{{ completed_today }}</p>
-</div>
-
-<div class="stat-card">
-<h3>📅 Μήνας</h3>
-<p>€{{ month_revenue }}</p>
-</div>
-
-</div>
-<div class="stats">
-
-<div class="card">
-💰
-<h2>€{{ revenue }}</h2>
-</div>
-
-<div class="card">
-✂
-<h2>{{ completed }}</h2>
-</div>
-
-<div class="card">
-📅
-<h2>{{ upcoming }}</h2>
-</div>
-
-<div class="card">
-❌
-<h2>{{ cancelled }}</h2>
-</div>
-
-</div>
 
 <div class="card">
 
@@ -274,20 +222,14 @@ margin-bottom:0;
 </div>
 
 <div class="stat-box">
-<h2>€{{ appointments|length * 15 }}</h2>
-<p>Εκτίμηση</p>
+<h2>€{{ today_revenue }}</h2>
+<p>Έσοδα</p>
 </div>
 
 </div>
 
 </div>
-<div class="card">
 
-<h3>📈 Revenue Trend</h3>
-
-<canvas id="revenueChart"></canvas>
-
-</div>
 <div class="card">
 
 <h3>⏭ Επόμενος Πελάτης</h3>
@@ -369,89 +311,16 @@ margin-bottom:0;
 👤 Πελατολόγιο
 </a>
 
+<a class="btn secondary" href="/analytics">
+📈 Analytics
+</a>
+
 <a href="/logout" class="btn secondary">
 🚪 Logout
 </a>
 </div>
 
 </div>
-<script>
 
-const ctx =
-document.getElementById('revenueChart');
-
-new Chart(ctx, {
-
-type: 'line',
-
-data: {
-
-labels: {{ chart_labels|tojson }},
-
-datasets: [{
-
-label: 'Revenue',
-
-data: {{ chart_values|tojson }},
-
-borderColor: '#d4af37',
-
-backgroundColor: 'rgba(212,175,55,0.2)',
-
-tension: 0.4,
-
-fill: true
-
-}]
-
-},
-
-options: {
-
-responsive: true,
-
-plugins: {
-
-legend: {
-
-labels: {
-
-color: 'white'
-
-}
-
-}
-
-},
-
-scales: {
-
-x: {
-
-ticks: {
-
-color: 'white'
-
-}
-
-},
-
-y: {
-
-ticks: {
-
-color: 'white'
-
-}
-
-}
-
-}
-
-}
-
-});
-
-</script>
 </body>
 </html>

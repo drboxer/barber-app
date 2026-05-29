@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Analytics</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+    margin:0;
+    background:#0f0f0f;
+    color:white;
+    font-family:Arial;
+    padding:20px;
+}
+
+.card{
+    background:#1b1b1b;
+    padding:20px;
+    border-radius:18px;
+    margin-bottom:20px;
+}
+
+.btn{
+    display:inline-block;
+    margin-bottom:20px;
+
+    padding:12px 16px;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    background:#2a2a2a;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="/" class="btn">
+🏠 Dashboard
+</a>
+
+<div class="card">
+
+<h2>📈 Revenue Trend</h2>
+
+<canvas id="revenueChart"></canvas>
+
+</div>
+
+<div class="card">
+
+<h2>🔥 Top Services</h2>
+
+{% for s in top_services %}
+
+<p>
+✂ {{ s[0] }} — {{ s[1] }}
+</p>
+
+{% endfor %}
+
+</div>
+
+<div class="card">
+
+<h2>👑 Top Customers</h2>
+
+{% for c in top_customers %}
+
+<p>
+👤 {{ c[0] }} — €{{ c[1] }}
+</p>
+
+{% endfor %}
+
+</div>
+
+<div class="card">
+
+<h2>🔥 Most Loyal</h2>
+
+{% for c in loyal_customers %}
+
+<p>
+💈 {{ c[0] }} — {{ c[1] }} visits
+</p>
+
+{% endfor %}
+
+</div>
+
+
+<script>
+
+const ctx =
+document.getElementById('revenueChart');
+
+new Chart(ctx, {
+
+type: 'line',
+
+data: {
+
+labels: {{ chart_labels|tojson }},
+
+datasets: [{
+
+label: 'Revenue',
+
+data: {{ chart_values|tojson }},
+
+borderColor: '#d4af37',
+
+backgroundColor: 'rgba(212,175,55,0.2)',
+
+tension: 0.4,
+
+fill: true
+
+}]
+
+},
+
+options: {
+
+responsive: true,
+
+plugins: {
+
+legend: {
+
+labels: {
+
+color: 'white'
+
+}
+
+}
+
+},
+
+scales: {
+
+x: {
+
+ticks: {
+
+color: 'white'
+
+}
+
+},
+
+y: {
+
+ticks: {
+
+color: 'white'
+
+}
+
+}
+
+}
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

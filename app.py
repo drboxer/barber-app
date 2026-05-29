@@ -177,15 +177,25 @@ def index():
     customer_count = c.fetchone()[0]
 
 
-
-    estimated = len(appointments) * 15
     # next appointment
     c.execute("""
-            SELECT name, date, start_time, service
-            FROM appointments
-            ORDER BY date ASC, start_time ASC
-            LIMIT 1
-        """)
+
+    SELECT name, date, start_time, service
+
+    FROM appointments
+
+    WHERE status='scheduled'
+
+    AND (
+        date > ?
+        OR (date = ? AND start_time >= ?)
+    )
+
+    ORDER BY date ASC, start_time ASC
+
+    LIMIT 1
+
+    """, (today, today, current_time))
 
     next_appointment = c.fetchone()
 
@@ -250,40 +260,13 @@ def index():
 
     cancelled = c.fetchone()[0]
 
-    c.execute("""
-
-    SELECT
-    date,
-    SUM(COALESCE(price,0))
-
-    FROM appointments
-
-    WHERE status='completed'
-
-    GROUP BY date
-
-    ORDER BY date ASC
-
-    LIMIT 7
-
-    """)
-
-    chart_data = c.fetchall()
 
     conn.close()
 
-    chart_labels = []
-    chart_values = []
-
-    for row in chart_data:
-        chart_labels.append(row[0])
-
-        chart_values.append(row[1])
 
     return render_template(
         "index.html",
         appointments=appointments,
-        estimated=estimated,
         next_appointment=next_appointment,
         customer_count=customer_count,
         today_timeline=today_timeline,
@@ -291,9 +274,7 @@ def index():
         cancelled=cancelled,
         today_revenue=today_revenue,
         completed_today=completed_today,
-        month_revenue=month_revenue,
-        chart_labels=chart_labels,
-        chart_values=chart_values
+        month_revenue=month_revenue
     )
 
 # ---------------- ADD ----------------
@@ -860,6 +841,109 @@ def update_status(id):
     conn.close()
 
     return {"ok": True}
+
+@app.route("/analytics")
+def analytics():
+
+    conn = sqlite3.connect("barber.db")
+    c = conn.cursor()
+    c.execute("""
+
+        SELECT
+        date,
+        SUM(COALESCE(price,0))
+
+        FROM appointments
+
+        WHERE status='completed'
+
+        GROUP BY date
+
+        ORDER BY date ASC
+
+        LIMIT 7
+
+        """)
+
+    chart_data = c.fetchall()
+    chart_labels = []
+    chart_values = []
+
+    for row in chart_data:
+        chart_labels.append(row[0])
+
+        chart_values.append(row[1])
+
+    c.execute("""
+
+        SELECT
+        service,
+        COUNT(*)
+
+        FROM appointments
+
+        GROUP BY service
+
+        ORDER BY COUNT(*) DESC
+
+        LIMIT 5
+
+        """)
+
+    top_services = c.fetchall()
+
+    c.execute("""
+
+       SELECT
+
+       name,
+       SUM(price) as total
+
+       FROM appointments
+
+       WHERE status='completed'
+
+       GROUP BY phone
+
+       ORDER BY total DESC
+
+       LIMIT 5
+
+       """)
+
+    top_customers = c.fetchall()
+
+    c.execute("""
+
+       SELECT
+
+       name,
+       COUNT(*) as visits
+
+       FROM appointments
+
+       GROUP BY phone
+
+       ORDER BY visits DESC
+
+       LIMIT 5
+
+       """)
+
+    loyal_customers = c.fetchall()
+
+    conn.close()
+
+    return render_template(
+
+        "analytics.html",
+
+        chart_labels=chart_labels,
+        chart_values=chart_values,
+        top_services=top_services,
+        top_customers=top_customers,
+        loyal_customers=loyal_customers
+    )
 
 
 # ---------------- RUN ----------------

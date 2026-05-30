@@ -155,8 +155,8 @@ def logout():
 # ---------------- HOME ----------------
 @app.route("/")
 def index():
-    # if not session.get("logged_in"):
-    #     return redirect("/login")
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     today = date.today().isoformat()
 
@@ -280,8 +280,8 @@ def index():
 # ---------------- ADD ----------------
 @app.route("/add", methods=["GET", "POST"])
 def add():
-    # if not session.get("logged_in"):
-    #     return redirect("/login")
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -413,8 +413,8 @@ def add():
 
 @app.route("/calendar")
 def calendar():
-    # if not session.get("logged_in"):
-    #     return redirect("/login")
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -477,8 +477,8 @@ def calendar():
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
-    # if not session.get("logged_in"):
-    #     return redirect("/login")
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -517,8 +517,8 @@ def edit(id):
 
 @app.route("/delete/<int:id>")
 def delete(id):
-    # if not session.get("logged_in"):
-    #     return redirect("/login")
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
@@ -577,8 +577,8 @@ def resize_appointment():
 
 @app.route("/customers")
 def customers():
-    # if not session.get("logged_in"):
-    #     return redirect("/login")
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
 
@@ -599,12 +599,10 @@ def customers():
         customers=customers
     )
 
-@app.route(
-"/customer/<int:id>",
-methods=["GET","POST"]
-)
+@app.route("/customer/<int:id>",methods=["GET","POST"])
 def customer_profile(id):
-
+    if not session.get("logged_in"):
+        return redirect("/login")
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
 
@@ -731,8 +729,8 @@ def update_customer(id):
 
 @app.route("/delete_customer/<int:id>")
 def delete_customer(id):
-    # if not session.get("logged_in"):
-    #     return redirect("/login")
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
 
@@ -825,6 +823,9 @@ def export_customers():
 @app.route("/appointment/<int:id>/status", methods=["POST"])
 def update_status(id):
 
+    if not session.get("logged_in"):
+        return redirect("/login")
+
     data = request.get_json()
     status = data["status"]
 
@@ -844,6 +845,9 @@ def update_status(id):
 
 @app.route("/analytics")
 def analytics():
+
+    if not session.get("logged_in"):
+        return redirect("/login")
 
     conn = sqlite3.connect("barber.db")
     c = conn.cursor()
